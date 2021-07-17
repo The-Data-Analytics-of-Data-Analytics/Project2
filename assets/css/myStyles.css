@@ -1,0 +1,71 @@
+.active {
+    font-weight: bold;
+    fill: rgb(97, 16, 16);
+    transition: fill 0.3s ease-out; 
+    text-anchor: middle;
+  }
+  
+.inactive {
+    /* font-weight: lighter; */
+    fill: #e93e3e;
+    transition: fill 0.3s ease-out; 
+    text-anchor: middle;
+  }
+
+  .inactive:hover {
+    fill:rgb(97, 16, 16);
+    cursor: pointer;
+  }
+
+  .d3-tip {
+    padding: 6px;
+    font-size: 12px;
+    line-height: 1;
+    line-height: 1.5em;
+    color: rgb(97, 16, 16);
+    text-align: center;
+    text-transform: capitalize;
+    background: #e6b1b1;
+    border-radius: 4px;
+  }
+
+  .circle {
+    fill: #af3549;
+    stroke: #d8a6a6;
+    stroke-width: 3px;
+  }
+  
+  .circle:hover {
+    fill: #af3549;
+    stroke: #b90606;
+    stroke-width: 4px;
+  }
+
+  .circle-text {
+    color:rgb(97, 16, 16);
+    font-weight: bold;
+  }
+
+  .y-axis {
+    color:rgb(97, 16, 16);  
+  }
+
+  .x-axis {
+    color:rgb(97, 16, 16);  
+  }
+
+  .dynamicChart {
+    display: block;
+    margin: 0;
+  }
+
+  html body {
+    background-image: url("../media/lightened-collection-newspapers.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .caption {
+    color:rgb(97, 16, 16);
+  }
