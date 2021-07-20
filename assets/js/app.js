@@ -23,7 +23,7 @@ var svg = d3
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-//take in data and a column argument based on chosen axis, calculate domain, set range, return
+//take in data and get an argument based on chosen X axis, calculate domain, set range, return
 //linear scale 
 function xScale(data, chosenXAxis) {
     var xLinearScale = d3.scaleLinear()
@@ -33,7 +33,7 @@ function xScale(data, chosenXAxis) {
     return xLinearScale;
 }
 
-//take in data and index argument based on chosen axis, calculate domain, set range, return
+//take in data and get an argument based on chosen X axis, calculate domain, set range, return
 //linear scale
 function yScale(data, chosenXAxis) {
     var yLinearScale = d3.scaleLinear()
@@ -44,7 +44,7 @@ function yScale(data, chosenXAxis) {
     return yLinearScale;
 }
 
-//take in axis object and new linear scale, transform axis over span of 1 second
+//take in X axis object and new linear scale, transform axis over span of 1 second
 function renderXAxis(newXScale, xAxis) {
     var bottomAxis = d3.axisBottom(newXScale);
   
@@ -55,7 +55,7 @@ function renderXAxis(newXScale, xAxis) {
     return xAxis;
   }
 
-  //take in axis object and new linear scale, transform axis over span of 1 second
+  //take in Y axis object and new linear scale, transform axis over span of 1 second
   function renderYAxis(newYScale, yAxis) {
     var leftAxis = d3.axisLeft(newYScale);
   
@@ -67,20 +67,20 @@ function renderXAxis(newXScale, xAxis) {
   }
 
   //double duty function, takes in old circle group and labels and transforms their data over span
-  //of 1 second using the new column specs and new linear scales, returns new circles group and labels 
+  //of 1 second using the new data specs and new linear scale, returns new circles group and labels 
   function renderCircleLayers(circlesGroup, circleLabels, newXScale, chosenXAxis) {
 
     circlesGroup.transition()
       .duration(1000)
-      .attr("cx", d => newXScale(d[chosenXAxis]));
+      .attr("cx", d => newXScale(d[chosenXAxis])); //d[chosenXAxis] => get JSON data for chosen X axis
     circleLabels.transition()
       .duration(1000)
-      .attr("x", d => newXScale(d[chosenXAxis]) - 7);
+      .attr("x", d => newXScale(d[chosenXAxis]) - 7); //d[chosenXAxis] => get JSON data for chosen X axis
   
     return circlesGroup, circleLabels;
   }
 
-  //update tooltip data using new column designations with old circles group, return new circles group
+  //update tooltip data using new X axis, return new circles group with updated tooltips
   function updateToolTip(chosenXAxis, circlesGroup) {
 
     var label;
@@ -100,7 +100,7 @@ function renderXAxis(newXScale, xAxis) {
       .attr("class", "d3-tip")
       .html(function(d) {
         return (`${d.state}<br>${xLabel}${d[chosenXAxis]}`); //d[chosenXAxis] => reference to JSON Y value,
-      });                                                   //d.state => ref to X category
+      });                                                   //d.state => ref to JSON X category
   
     //add tooltip to circles group
     circlesGroup.call(toolTip);
@@ -112,15 +112,10 @@ function renderXAxis(newXScale, xAxis) {
       .on("mouseout", function(data) {
         toolTip.hide(data);
     });
-  
-    return circlesGroup; 
+      return circlesGroup; 
   }
 
-  //tools, technologies, starting salary
-  //initialize X axis
-  var chosenXAxis = "tools";
-
-  //populate dropdown
+  //populate dropdown with careers
   var careers = ["Data Scientist", "Data Engineer", "Data Analyst"];
 
   d3.select("#dropdown")
@@ -132,6 +127,7 @@ function renderXAxis(newXScale, xAxis) {
     return career;
   });
 
+  //dropdown listener
   var dropdownMenu = d3.selectAll("#dropdown");
   dropdownMenu.on("change", filterViz);
 
@@ -144,14 +140,14 @@ function renderXAxis(newXScale, xAxis) {
       d3.event.preventDefault();
     }
 
-    //get user selection from dropdown, extract index number from array of IDs
+    //get user selection from dropdown, assign correct JSON index
     userSelect = d3.select('#dropdown option:checked').text();
     if (userSelect === "Data Scientist")
-      JSONaddress = "";
+      careerIndex = ""; //relative index to correct JSON
     else if (userSelect === "Data Engineer")
-      JSONaddress = "";
+      careerIndex = ""; //relative index to correct JSON
     else if (userSelect === "Data Analyst")
-      JSONaddress = "";
+      careerIndex = ""; //relative index to correct JSON
     else
       throw new Error("Oops...user selection error");
 
@@ -159,9 +155,12 @@ function renderXAxis(newXScale, xAxis) {
     d3.json(JSONaddress).then(function(statisticalData, err) {
       if (err) throw err;
   
+  //select career specific data    
+  statisticalData =  statisticalData[careerIndex];
+
   //transform data to numeric form
     statisticalData.forEach(function(data) {
-      //convert numerical data to Number
+      //convert numerical data to numeric ie d = +d
     });
 
   //intitalize linear scales
@@ -193,7 +192,7 @@ function renderXAxis(newXScale, xAxis) {
     .attr("y", d => yLinearScale(d[chosenXAxis]) + 3) //d[chosenXAxis] => reference to JSON Y value
     .attr("font-size", 9)
     .attr("text-anchor", "center")
-    .text(d => d); //labels?
+    .text(d => d); //do we want any labels?
 
   //add circles to chartgroup, leave slightly translucent so labels show through, center coordinates
   //based on each data point from specified index passed to the linear scale  
@@ -207,8 +206,7 @@ function renderXAxis(newXScale, xAxis) {
     .attr("r", 14)
     .attr("opacity", ".60");
 
-   //create axis label groups and labels, place on chart using dimensions, class so that css 
-  //distinguishes current axis from unselected ones 
+   //create X axis label group and labels, place on chart using dimensions
     var xLabelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${chartWidth / 2}, ${chartHeight + 30})`);
 
@@ -226,23 +224,25 @@ function renderXAxis(newXScale, xAxis) {
     .classed("inactive", true)
     .text("Most Popular Technologies");
 
-    var startingSalaryLabel = xLabelsGroup.append("text")
+    var startingSalariesLabel = xLabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 60)
     .attr("value", "startingSalary") 
     .classed("inactive", true)
-    .text("Average Starting Salaries By Location");
+    .text("Average Starting Salaries");
     
-  //initialize tooltip
+    //initialize tooltip
     var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
-    //axis listener functions
-
+    //initialize X axis
+    var chosenXAxis = "tools";  
+    
+    //X axis listener function
       xLabelsGroup.selectAll("text")
       .on("click", function() {
       var value = d3.select(this).attr("value");
       
-      //update axis value
+      //update X axis value
       if (value !== chosenXAxis) {
         chosenXAxis = value;
         
