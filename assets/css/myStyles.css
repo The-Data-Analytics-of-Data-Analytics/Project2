@@ -28,21 +28,16 @@
     border-radius: 4px;
   }
 
-  .circle {
+  .bar {
     fill: #af3549;
     stroke: #d8a6a6;
     stroke-width: 3px;
   }
   
-  .circle:hover {
+  .bar:hover {
     fill: #af3549;
     stroke: #b90606;
     stroke-width: 4px;
-  }
-
-  .circle-text {
-    color:rgb(97, 16, 16);
-    font-weight: bold;
   }
 
   .y-axis {

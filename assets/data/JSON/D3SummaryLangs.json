@@ -1,0 +1,37 @@
+[{
+  "_id": {
+    "$oid": "60f8fe70b5550398a7e2af83"
+  },
+  "Job_Type": "data_engineer",
+  "python": "65",
+  "sql": "63",
+  "r": "17",
+  "sas": "5",
+  "spark": "52",
+  "java": "51",
+  "avg_salary": "104,372"
+},{
+  "_id": {
+    "$oid": "60f8fe70b5550398a7e2af84"
+  },
+  "Job_Type": "data_analyst",
+  "python": "29",
+  "sql": "58",
+  "r": "25",
+  "sas": "17",
+  "spark": "4",
+  "java": "1",
+  "avg_salary": "60,024"
+},{
+  "_id": {
+    "$oid": "60f8fe70b5550398a7e2af85"
+  },
+  "Job_Type": "data_scientist",
+  "python": "58",
+  "sql": "54",
+  "r": "39",
+  "sas": "16",
+  "spark": "27",
+  "java": "26",
+  "avg_salary": "54694"
+}]

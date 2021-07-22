@@ -23,11 +23,36 @@ var svg = d3
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+//populate dropdown with careers
+var careers = ["Data Scientist", "Data Engineer", "Data Analyst"];
+
+d3.select("#dropdown")
+.selectAll("option")
+.data(careers)
+.enter()
+.append("option")
+.text(function (career) {
+  return career;
+});
+
+//dropdown listener
+var dropdownMenu = d3.selectAll("#dropdown");
+dropdownMenu.on("change", filterViz);
+
 //take in data and get an argument based on chosen X axis, calculate domain, set range, return
 //linear scale 
 function xScale(data, chosenXAxis) {
-    var xLinearScale = d3.scaleLinear()
-      .domain([0, data[chosenXAxis].length]) //data[chosenXAxis] => reference to JSON
+  var chosenXLength = 0;
+  
+  if (chosenXAxis === "tools") 
+    chosenXLength =  3;
+  else if (chosenXAxis === "languages")
+    chosenXLength = 6;
+  else if (chosenXAxis === "startingSalary")
+    chosenXLength = 1;
+  
+  var xLinearScale = d3.scaleLinear()
+      .domain([0, chosenXLength])
       .range([0, chartWidth]);
   
     return xLinearScale;
@@ -36,6 +61,7 @@ function xScale(data, chosenXAxis) {
 //take in data and get an argument based on chosen X axis, calculate domain, set range, return
 //linear scale
 function yScale(data, chosenXAxis) {
+
     var yLinearScale = d3.scaleLinear()
       .domain([d3.min(data, d => +d[chosenXAxis]), //+d[chosenXAxis] => reference to corresponding JSON y value
         d3.max(data, d => +d[chosenXAxis])]) //+d[chosenXAxis] => reference to corresponding JSON y value
@@ -68,70 +94,56 @@ function renderXAxis(newXScale, xAxis) {
 
   //double duty function, takes in old circle group and labels and transforms their data over span
   //of 1 second using the new data specs and new linear scale, returns new circles group and labels 
-  function renderCircleLayers(circlesGroup, circleLabels, newXScale, chosenXAxis) {
+  function renderBars(barGroup, newXScale, newYScale, chosenXAxis) {
 
-    circlesGroup.transition()
+    barGroup.transition()
       .duration(1000)
-      .attr("cx", d => newXScale(d[chosenXAxis])); //d[chosenXAxis] => get JSON data for chosen X axis
-    circleLabels.transition()
-      .duration(1000)
-      .attr("x", d => newXScale(d[chosenXAxis]) - 7); //d[chosenXAxis] => get JSON data for chosen X axis
+      .attr("x", function (d) { 
+        newXScale()
+      })
+      .attr("y", function (d) {
+        newYScale() 
+      })
+      .attr("height", d => d); 
   
-    return circlesGroup, circleLabels;
+  
+    return barGroup;
   }
 
   //update tooltip data using new X axis, return new circles group with updated tooltips
-  function updateToolTip(chosenXAxis, circlesGroup) {
+  function updateToolTip(chosenXAxis, barGroup) {
 
-    var label;
+    var xlabel;
   
     if (chosenXAxis === "tools") {
-      label = "Tool: ";
+      xlabel = "Tool: ";
     }
-    else if (chosenXAxis === "techologies") {
-      label = "Technology: ";
+    else if (chosenXAxis === "languages") {
+      xlabel = "Language: ";
     }
-    else if (chosenXAxis === "startingSalary") {
-      label = "Starting Salary: "; 
+    else if (chosenXAxis === "avgSalary") {
+      xlabel = "Average Salary: "; 
     }
 
     var toolTip = d3.tip()
       .attr("class", "tooltip")
       .attr("class", "d3-tip")
       .html(function(d) {
-        return (`${d.state}<br>${xLabel}${d[chosenXAxis]}`); //d[chosenXAxis] => reference to JSON Y value,
+        return (`${d.Job_Type}<br>${xLabel}${d}`); //d[chosenXAxis] => reference to JSON Y value,
       });                                                   //d.state => ref to JSON X category
   
     //add tooltip to circles group
-    circlesGroup.call(toolTip);
+    barGroup.call(toolTip);
 
     //listener for circles to activate/deactivate tooltip
-    circlesGroup.on("mouseover", function(data) {
+    barGroup.on("mouseover", function(data) {
       toolTip.show(data, this);
     })
       .on("mouseout", function(data) {
         toolTip.hide(data);
     });
-      return circlesGroup; 
+      return barGroup; 
   }
-
-  //populate dropdown with careers
-  var careers = ["Data Scientist", "Data Engineer", "Data Analyst"];
-
-  d3.select("#dropdown")
-  .selectAll("option")
-  .data(careers)
-  .enter()
-  .append("option")
-  .text(function (career) {
-    return career;
-  });
-
-  //dropdown listener
-  var dropdownMenu = d3.selectAll("#dropdown");
-  dropdownMenu.on("change", filterViz);
-
-  filterViz();
 
   function filterViz() {
 
@@ -143,28 +155,48 @@ function renderXAxis(newXScale, xAxis) {
     //get user selection from dropdown, assign correct JSON index
     userSelect = d3.select('#dropdown option:checked').text();
     if (userSelect === "Data Scientist")
-      careerIndex = ""; //relative index to correct JSON
+      careerIndex = 2; //relative index to correct JSON element
     else if (userSelect === "Data Engineer")
-      careerIndex = ""; //relative index to correct JSON
+      careerIndex = 0; //relative index to correct JSON element
     else if (userSelect === "Data Analyst")
-      careerIndex = ""; //relative index to correct JSON
+      careerIndex = 1; //relative index to correct JSON element
     else
       throw new Error("Oops...user selection error");
 
+
   //read in data JSON, catch any error
-    d3.json(JSONaddress).then(function(statisticalData, err) {
+    d3.json("../data/JSON/D3SummaryLangs.json").then(function(langsData, err) {
       if (err) throw err;
-  
-  //select career specific data    
-  statisticalData =  statisticalData[careerIndex];
+    
+      d3.json("../data/JSON/D3SummaryTools.json").then(function(toolsData, err) {
+        if (err) throw err;
+
+    langsData = langsData[careerIndex];
+    toolsData = toolsData[careerIndex];
+    
+    //initialize X axis
+    var chosenXAxis = "tools";
 
   //transform data to numeric form
-    statisticalData.forEach(function(data) {
-      //convert numerical data to numeric ie d = +d
+    langsData.forEach(function(data) {
+      data.python = +data.python;
+      data.sql = +data.sql;
+      data.r = +data.r;
+      data.sas = +data.sas;
+      data.spark = +data.spark;
+      data.java = +data.java;
+      data.avg_salary = +data.avg_salary;
+    });
+
+    toolsData.forEach(function(data) {
+      data.machine_learning = +data.machine_learning;
+      data.hadoop = +data.hadoop;
+      data.tableau = +data.tableau;
+      data.avg_salary = +data.avg_salary;
     });
 
   //intitalize linear scales
-    var xLinearScale = xScale(statisticalData, chosenXAxis);
+    var xLinearScale = xScale(Data, chosenXAxis);
     var yLinearScale = yScale(statisticalData, chosenXAxis);
 
   //create axes from linear scales
@@ -181,30 +213,23 @@ function renderXAxis(newXScale, xAxis) {
     .classed("y-axis", true)
     .call(leftAxis);   
 
-  //add state abbreviations to chartgroup where corresponding circles will be, center them on
-  //circles' centers
-    var circleLabels = chartGroup.selectAll(null)
-    .data(statisticalData)
-    .enter()
-    .append("text")
-    .classed("circle-text", true)
-    .attr("x", d => xLinearScale(d[chosenXAxis]) - 7) //d[chosenXAxis] => reference to JSON X category
-    .attr("y", d => yLinearScale(d[chosenXAxis]) + 3) //d[chosenXAxis] => reference to JSON Y value
-    .attr("font-size", 9)
-    .attr("text-anchor", "center")
-    .text(d => d); //do we want any labels?
 
-  //add circles to chartgroup, leave slightly translucent so labels show through, center coordinates
-  //based on each data point from specified index passed to the linear scale  
-    var circlesGroup = chartGroup.selectAll("circle")
-    .data(statisticalData)
-    .enter()
-    .append("circle")
-    .classed("circle", true)
-    .attr("cx", d => xLinearScale(d[chosenXAxis])) //d[chosenXAxis] => reference to JSON X category
-    .attr("cy", d => yLinearScale(d[chosenXAxis])) //d[chosenXAxis] => reference to JSON Y value
-    .attr("r", 14)
-    .attr("opacity", ".60");
+    var barSpacing = 10; // desired space between each bar
+  
+    // Create a 'barWidth' variable so that the bar chart spans the entire chartWidth.
+    var barWidth = (chartWidth - (barSpacing * (statisticalData[careerIndex].length - 1))) / statisticalData[chosenXAxis].length;
+
+    var barGroup = chartGroup.selectAll("rect")
+      .data(statisticalData[chosenXAxis])
+      .enter()
+      .append("rect")
+      .classed("bar", true)
+      .attr("width", d => barWidth)
+      .attr("height", d => d3.max(yLinearScale(d[chosenXAxis])))
+      .attr("x", (d, i) => i * (barWidth + barSpacing))
+      .attr("y", d => yLinearScale(d[chosenXAxis]))
+      .catch(function(error) {
+        console.log(error); });
 
    //create X axis label group and labels, place on chart using dimensions
     var xLabelsGroup = chartGroup.append("g")
@@ -217,25 +242,22 @@ function renderXAxis(newXScale, xAxis) {
     .classed("active", true)
     .text("Most Popular Tools");
 
-    var technologiesLabel = xLabelsGroup.append("text")
+    var languagesLabel = xLabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 40)
-    .attr("value", "technologies") 
+    .attr("value", "languages") 
     .classed("inactive", true)
-    .text("Most Popular Technologies");
+    .text("Most Popular Languages");
 
-    var startingSalariesLabel = xLabelsGroup.append("text")
+    var avgSalaryLabel = xLabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 60)
     .attr("value", "startingSalary") 
     .classed("inactive", true)
-    .text("Average Starting Salaries");
+    .text("Average Salaries");
     
     //initialize tooltip
-    var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
-
-    //initialize X axis
-    var chosenXAxis = "tools";  
+    var barGroup = updateToolTip(chosenXAxis, barGroup)  
     
     //X axis listener function
       xLabelsGroup.selectAll("text")
@@ -247,48 +269,51 @@ function renderXAxis(newXScale, xAxis) {
         chosenXAxis = value;
         
         //update linear scales, axes, circles/tooltips/labels from user choice of X axis label
-        xLinearScale = xScale(statisticalData, chosenXAxis);
-        yLinearScale = yScale(statisticalData, chosenXAxis);
+        xLinearScale = xScale(langsData, toolsData, chosenXAxis);
+        yLinearScale = yScale(langsData, toolsData, chosenXAxis);
         xAxis = renderXAxis(xLinearScale, xAxis);
         yAxis = renderXAxis(yLinearScale, yAxis);
-        circlesGroup, circleLabels = renderCircleLayers(circlesGroup, circleLabels, xLinearScale, chosenXAxis);
-        circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+        barGroup = renderBars(barGroup, xLinearScale, yLinearScale, chosenXAxis);
+        barGroup = updateToolTip(chosenXAxis, barGroup);
 
         //make sure css is distinguishing active/inactive axes
         if (chosenXAxis === "tools") {
           toolsLabel
             .classed("active", true)
             .classed("inactive", false);
-          technologiesLabel
+          languagesLabel
             .classed("inactive", true)
             .classed("active", false);  
-          startingSalariesLabel
+          avgSalaryLabel
             .classed("inactive", true)
             .classed("active", false);  
         }
-        else if (chosenXAxis === "technologies") {
-          technologiesLabel
+        else if (chosenXAxis === "languages") {
+          languagesLabel
             .classed("active", true)
             .classed("inactive", false);
-          startingSalariesLabel
+          avgSalaryLabel
             .classed("inactive", true)
             .classed("active", false);
           toolsLabel
             .classed("inactive", true)
             .classed("active", false);
         }
-        else if (chosenXAxis === "startingSalary") {
-          startingSalariesLabel
+        else if (chosenXAxis === "avgSalary") {
+          avgSalaryLabel
             .classed("active", true)
             .classed("inactive", false);
           toolsLabel
             .classed("inactive", true)
             .classed("active", false);
-          technologiesLabel
+          languagesLabel
             .classed("inactive", true)
             .classed("active", false);
         }
       }
     });  
   });
+});
 }
+
+filterViz();
