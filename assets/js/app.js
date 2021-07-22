@@ -1,4 +1,27 @@
-//set svg and chart dimensions and margins 
+//populate dropdown with careers
+var careers = ["Data Scientist", "Data Engineer", "Data Analyst"];
+
+d3.select("#dropdown")
+.selectAll("option")
+.data(careers)
+.enter()
+.append("option")
+.text(function (career) {
+  return career;
+});
+
+//dropdown listener
+var dropdownMenu = d3.selectAll("#dropdown");
+dropdownMenu.on("change", filterViz);
+
+function filterViz() {
+
+  //if accessed due to change prevent default reload behavior, if initializing skip
+  if (d3.event != null) {
+    d3.event.preventDefault();
+  }
+
+//set svg and chart dimensions and margins  
 var svgWidth = 900;
 var svgHeight = 600;
 
@@ -23,32 +46,16 @@ var svg = d3
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-//populate dropdown with careers
-var careers = ["Data Scientist", "Data Engineer", "Data Analyst"];
-
-d3.select("#dropdown")
-.selectAll("option")
-.data(careers)
-.enter()
-.append("option")
-.text(function (career) {
-  return career;
-});
-
-//dropdown listener
-var dropdownMenu = d3.selectAll("#dropdown");
-dropdownMenu.on("change", filterViz);
-
 //take in data and get an argument based on chosen X axis, calculate domain, set range, return
 //linear scale 
-function xScale(data, chosenXAxis) {
+function xScale(langsData, toolsData, chosenXAxis) {
   var chosenXLength = 0;
   
   if (chosenXAxis === "tools") 
-    chosenXLength =  3;
+    chosenXLength = toolsData.length() - 2;
   else if (chosenXAxis === "languages")
-    chosenXLength = 6;
-  else if (chosenXAxis === "startingSalary")
+    chosenXLength = langsData.length() - 2;
+  else if (chosenXAxis === "avgSalary")
     chosenXLength = 1;
   
   var xLinearScale = d3.scaleLinear()
@@ -60,11 +67,32 @@ function xScale(data, chosenXAxis) {
 
 //take in data and get an argument based on chosen X axis, calculate domain, set range, return
 //linear scale
-function yScale(data, chosenXAxis) {
+function yScale(langsData, toolsData, chosenXAxis) {
 
-    var yLinearScale = d3.scaleLinear()
-      .domain([d3.min(data, d => +d[chosenXAxis]), //+d[chosenXAxis] => reference to corresponding JSON y value
-        d3.max(data, d => +d[chosenXAxis])]) //+d[chosenXAxis] => reference to corresponding JSON y value
+var methodData;
+
+  if (chosenXAxis === "tools") {
+    methodData = toolsData;
+    methodData.forEach(function (d, i) {
+      methodData = null;
+      while (i > 0 && i < (d.length - 1))
+        methodData += d[i]
+    }); 
+  }
+  else if (chosenXAxis === "languages") {
+    methodData = langsData;
+      methodData.forEach(function (d, i) {
+      methodData = null;
+      while (i > 0 && i < (d.length - 1))
+        methodData += d[i]
+      }); 
+    }
+  else if (chosenXAxis === "avgSalary")
+    methodData = toolsData[toolsData.length - 1];
+
+  var yLinearScale = d3.scaleLinear()
+      .domain([d3.min(methodData), 
+        d3.max(methodData)]) 
       .range([chartHeight, 0]);
   
     return yLinearScale;
@@ -98,14 +126,9 @@ function renderXAxis(newXScale, xAxis) {
 
     barGroup.transition()
       .duration(1000)
-      .attr("x", function (d) { 
-        newXScale()
-      })
-      .attr("y", function (d) {
-        newYScale() 
-      })
-      .attr("height", d => d); 
-  
+      .attr("x", (d, i) => i * (barWidth + barSpacing))
+      .attr("y", d => d => chartHeight - d3.max(d))
+      .attr("height", d => (d3.max(d) * 2)); //adjust multiplier as needed 
   
     return barGroup;
   }
@@ -128,9 +151,10 @@ function renderXAxis(newXScale, xAxis) {
     var toolTip = d3.tip()
       .attr("class", "tooltip")
       .attr("class", "d3-tip")
-      .html(function(d) {
-        return (`${d.Job_Type}<br>${xLabel}${d}`); //d[chosenXAxis] => reference to JSON Y value,
-      });                                                   //d.state => ref to JSON X category
+      .html(function(d, i) {
+        while (i > 0 && i < (d.length - 1))
+          return (`${d.Job_Type}<br>${xLabel}: ${d[i]}`); 
+      });                                                   
   
     //add tooltip to circles group
     barGroup.call(toolTip);
@@ -144,13 +168,6 @@ function renderXAxis(newXScale, xAxis) {
     });
       return barGroup; 
   }
-
-  function filterViz() {
-
-    //if accessed due to change prevent default reload behavior, if initializing skip
-    if (d3.event != null) {
-      d3.event.preventDefault();
-    }
 
     //get user selection from dropdown, assign correct JSON index
     userSelect = d3.select('#dropdown option:checked').text();
@@ -176,6 +193,7 @@ function renderXAxis(newXScale, xAxis) {
     
     //initialize X axis
     var chosenXAxis = "tools";
+    var currentData = toolsData; 
 
   //transform data to numeric form
     langsData.forEach(function(data) {
@@ -196,8 +214,8 @@ function renderXAxis(newXScale, xAxis) {
     });
 
   //intitalize linear scales
-    var xLinearScale = xScale(Data, chosenXAxis);
-    var yLinearScale = yScale(statisticalData, chosenXAxis);
+    var xLinearScale = xScale(toolsData, chosenXAxis);
+    var yLinearScale = yScale(toolsData, chosenXAxis);
 
   //create axes from linear scales
     var bottomAxis = d3.axisBottom(xLinearScale);
@@ -220,16 +238,16 @@ function renderXAxis(newXScale, xAxis) {
     var barWidth = (chartWidth - (barSpacing * (statisticalData[careerIndex].length - 1))) / statisticalData[chosenXAxis].length;
 
     var barGroup = chartGroup.selectAll("rect")
-      .data(statisticalData[chosenXAxis])
+      .data(toolsData)
       .enter()
       .append("rect")
       .classed("bar", true)
       .attr("width", d => barWidth)
-      .attr("height", d => d3.max(yLinearScale(d[chosenXAxis])))
       .attr("x", (d, i) => i * (barWidth + barSpacing))
-      .attr("y", d => yLinearScale(d[chosenXAxis]))
+      .attr("y", d => d => chartHeight - d3.max(d))
+      .attr("height", d => (d3.max(d) * 2)) //adjust multiplier as needed 
       .catch(function(error) {
-        console.log(error); });
+        throw(error); });
 
    //create X axis label group and labels, place on chart using dimensions
     var xLabelsGroup = chartGroup.append("g")
@@ -268,9 +286,14 @@ function renderXAxis(newXScale, xAxis) {
       if (value !== chosenXAxis) {
         chosenXAxis = value;
         
+        if (chosenXAxis === "tools" || chosenXAxis === "avgSalary")
+          currentData = toolsData;
+        else 
+          currentdata = langsData;
+
         //update linear scales, axes, circles/tooltips/labels from user choice of X axis label
-        xLinearScale = xScale(langsData, toolsData, chosenXAxis);
-        yLinearScale = yScale(langsData, toolsData, chosenXAxis);
+        xLinearScale = xScale(currentData, chosenXAxis);
+        yLinearScale = yScale(currentData, chosenXAxis);
         xAxis = renderXAxis(xLinearScale, xAxis);
         yAxis = renderXAxis(yLinearScale, yAxis);
         barGroup = renderBars(barGroup, xLinearScale, yLinearScale, chosenXAxis);
