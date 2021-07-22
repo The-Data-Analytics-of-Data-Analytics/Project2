@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Data Of Data Analytics</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/myStyles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='myStyles.css') }}">
 </head>
 
 <body>
 
-    <center><div class="jumbotron text-center"><h1>Welcome to the Data Analytics of Data Careers!</h1></div>></center>
+    <center><div class="jumbotron text-center"><h1>Welcome to the Data Analytics of Data Careers!</h1></div></center>
     <center><h2>Click on a bottom chart axis to explore the dataset</h2></center>
     <center><h2>Click the button below to see the interactive map page</h2></center>
 
@@ -39,14 +39,14 @@
     <br><br>
 
     <!-- link to leaflet map-->
-    <center><a href="http://localhost:5000/leaflet"><button type="button" class="btn btn-primary btn-lg"></button>Click here to view the same information using geo-mapping!</a></center>
+    <center><a href="http://localhost:5000/leaflet"><button type="button" class="btn btn-primary btn-lg">Click here to view the same information using geo-mapping!</button></a></center>
 
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="{{ url_for(https://d3js.org/d3.v5.min.js) }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
