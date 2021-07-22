@@ -54,7 +54,7 @@
   }
 
   html body {
-    background-image: url("../media/lightened-collection-newspapers.png");
+    /*background-image: url("../media/lightened-collection-newspapers.png");*/
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

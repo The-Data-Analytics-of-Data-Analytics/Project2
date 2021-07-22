@@ -48,18 +48,10 @@ var chartGroup = svg.append("g")
 
 //take in data and get an argument based on chosen X axis, calculate domain, set range, return
 //linear scale 
-function xScale(langsData, toolsData, chosenXAxis) {
-  var chosenXLength = 0;
-  
-  if (chosenXAxis === "tools") 
-    chosenXLength = toolsData.length() - 2;
-  else if (chosenXAxis === "languages")
-    chosenXLength = langsData.length() - 2;
-  else if (chosenXAxis === "avgSalary")
-    chosenXLength = 1;
+function xScale(methodData) {}
   
   var xLinearScale = d3.scaleLinear()
-      .domain([0, chosenXLength])
+      .domain([0, (methodData.length() - 2)])
       .range([0, chartWidth]);
   
     return xLinearScale;
@@ -67,28 +59,7 @@ function xScale(langsData, toolsData, chosenXAxis) {
 
 //take in data and get an argument based on chosen X axis, calculate domain, set range, return
 //linear scale
-function yScale(langsData, toolsData, chosenXAxis) {
-
-var methodData;
-
-  if (chosenXAxis === "tools") {
-    methodData = toolsData;
-    methodData.forEach(function (d, i) {
-      methodData = null;
-      while (i > 0 && i < (d.length - 1))
-        methodData += d[i]
-    }); 
-  }
-  else if (chosenXAxis === "languages") {
-    methodData = langsData;
-      methodData.forEach(function (d, i) {
-      methodData = null;
-      while (i > 0 && i < (d.length - 1))
-        methodData += d[i]
-      }); 
-    }
-  else if (chosenXAxis === "avgSalary")
-    methodData = toolsData[toolsData.length - 1];
+function yScale(methodData) {
 
   var yLinearScale = d3.scaleLinear()
       .domain([d3.min(methodData), 
@@ -152,7 +123,7 @@ function renderXAxis(newXScale, xAxis) {
       .attr("class", "tooltip")
       .attr("class", "d3-tip")
       .html(function(d, i) {
-        while (i > 0 && i < (d.length - 1))
+        while (i > 0 && i < (d.length() - 1))
           return (`${d.Job_Type}<br>${xLabel}: ${d[i]}`); 
       });                                                   
   
@@ -182,36 +153,50 @@ function renderXAxis(newXScale, xAxis) {
 
 
   //read in data JSON, catch any error
-    d3.json("../data/JSON/D3SummaryLangs.json").then(function(langsData, err) {
+    d3.json("../static/D3SummaryLangs.json").then(function(langsData, err) {
       if (err) throw err;
     
-      d3.json("../data/JSON/D3SummaryTools.json").then(function(toolsData, err) {
+      d3.json("../static/D3SummaryTools.json").then(function(toolsData, err) {
         if (err) throw err;
 
     langsData = langsData[careerIndex];
     toolsData = toolsData[careerIndex];
-    
-    //initialize X axis
-    var chosenXAxis = "tools";
-    var currentData = toolsData; 
+
+    langsData = [];
+    toolsData = [];
 
   //transform data to numeric form
-    langsData.forEach(function(data) {
+
+  Object.entries(langsData).forEach(data => {
       data.python = +data.python;
+      langsData.push(data.python);
       data.sql = +data.sql;
+      langsData.push(data.sql);
       data.r = +data.r;
+      langsData.push(data.r);
       data.sas = +data.sas;
+      langsData.push(data.sas);
       data.spark = +data.spark;
+      langsData.push(data.spark);
       data.java = +data.java;
+      langsData.push(data.java);
       data.avg_salary = +data.avg_salary;
+      langsData.push(data.avgSalary);
+  });
+
+    Object.entries(toolsData).forEach(data => {
+      data.machine_learning = +data.machine_learning;
+      toolsData.push(data.machine_learning);
+      data.hadoop = +data.hadoop;
+      toolsData.push(data.hadoop);
+      data.tableau = +data.tableau;
+      toolsData.push(data.tableau);
+      data.avg_salary = +data.avg_salary;
+      toolsData.push(data.avgSalary);
     });
 
-    toolsData.forEach(function(data) {
-      data.machine_learning = +data.machine_learning;
-      data.hadoop = +data.hadoop;
-      data.tableau = +data.tableau;
-      data.avg_salary = +data.avg_salary;
-    });
+    console.log(langsData);
+    console.log(toolsData);
 
   //intitalize linear scales
     var xLinearScale = xScale(toolsData, chosenXAxis);
@@ -235,7 +220,7 @@ function renderXAxis(newXScale, xAxis) {
     var barSpacing = 10; // desired space between each bar
   
     // Create a 'barWidth' variable so that the bar chart spans the entire chartWidth.
-    var barWidth = (chartWidth - (barSpacing * (statisticalData[careerIndex].length - 1))) / statisticalData[chosenXAxis].length;
+    var barWidth = (chartWidth - (barSpacing * (currentData.length() - 2))) / (currentData.length() - 2);
 
     var barGroup = chartGroup.selectAll("rect")
       .data(toolsData)

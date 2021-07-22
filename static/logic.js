@@ -1,9 +1,9 @@
-d3.json("../assets/data/JSON/engineerTools.json").then(function(engineerTools) {
-  d3.json("../assets/data/JSON/engineerLangs.json").then(function(engineerLangs) {
-    d3.json("../assets/data/JSON/scientistTools.json").then(function(scientistTools) {
-      d3.json("../assets/data/JSON/scientistLangs.json").then(function(scientistLangs) {
-        d3.json("../assets/data/JSON/analystTools.json").then(function(analystTools)  {
-          d3.json("../assets/data/JSON/analystLangs.json").then(function(analystLangs) {
+d3.json("../data/JSON/D3SummaryLangs.json").then(function(engineerTools) {
+  d3.json("../data/JSON/LeafletDatasets/engineerLangs.json").then(function(engineerLangs) {
+    d3.json("../data/JSON/LeafletDatasets/scientistTools.json").then(function(scientistTools) {
+      d3.json("../data/JSON/LeafletDatasets/scientistLangs.json").then(function(scientistLangs) {
+        d3.json("../data/JSON/LeafletDatasets/analystTools.json").then(function(analystTools)  {
+          d3.json("../data/JSON/LeafletDatasets/analystLangs.json").then(function(analystLangs) {
             
     var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
       attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
@@ -76,9 +76,9 @@ d3.json("../assets/data/JSON/engineerTools.json").then(function(engineerTools) {
               layerIndex = "Scientist";
             else
               layerIndex = "Analyst";
-            var newMarker = L.marker([dataset.lat, dataset.long]); //change reference to data to fit the structure of the JSON
+            var newMarker = L.marker(dataset.lat, dataset.long]); //change reference to data to fit the structure of the JSON
             newMarker.addTo(layers[layerIndex]);
-            newMarker.bindPopup("<p>Top Tools: " + topTools + "</p><hr><p>Top Languages: " + topLanguages + "</p>");
+            newMarker.bindPopup("<p>Top Tools: " + topTools + "</p><hr><p>Top Languages: " + topLanguages + "</p><hr><p>Average Starting Salary: " + avgStartingSalary + "</p>"); //html table
 
 
             
