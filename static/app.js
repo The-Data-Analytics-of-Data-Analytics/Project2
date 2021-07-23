@@ -38,24 +38,24 @@ var chartGroup = svg.append("g")
         var dropdownMenu = d3.selectAll("#dropdown");
         dropdownMenu.on("change", filterViz);
 
-            langsData = langsData[2];
-            toolsData = toolsData[2];
+            langsDataSelected = langsData[2];
+            toolsDataSelected = toolsData[2];
 
             langsDataList = [];
             toolsDataList = [];
             avgSalaryDataList = [];
 
-            langsDataList.push({"python": +langsData.python});
-            langsDataList.push({"sql": +langsData.sql});
-            langsDataList.push({"r": +langsData.r});
-            langsDataList.push({"sas": +langsData.sas});
-            langsDataList.push({"spark": +langsData.spark});
-            langsDataList.push({"java": langsData.java});
-            avgSalaryDataList.push({"avg_salary": +langsData.avg_salary});
+            langsDataList.push({"python": +langsDataSelected.python});
+            langsDataList.push({"sql": +langsDataSelected.sql});
+            langsDataList.push({"r": +langsDataSelected.r});
+            langsDataList.push({"sas": +langsDataSelected.sas});
+            langsDataList.push({"spark": +langsDataSelected.spark});
+            langsDataList.push({"java": langsDataSelected.java});
+            avgSalaryDataList.push({"avg_salary": +langsDataSelected.avg_salary});
 
-            toolsDataList.push({"machine_learning": +toolsData.machine_learning});
-            toolsDataList.push({"hadoop": +toolsData.hadoop});
-            toolsDataList.push({"tableau": +toolsData.tableau});
+            toolsDataList.push({"machine_learning": +toolsDataSelected.machine_learning});
+            toolsDataList.push({"hadoop": +toolsDataSelected.hadoop});
+            toolsDataList.push({"tableau": +toolsDataSelected.tableau});
 
             console.log(langsDataList);
             console.log(toolsDataList);
