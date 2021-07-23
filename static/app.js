@@ -45,21 +45,21 @@ var chartGroup = svg.append("g")
             toolsDataList = [];
             avgSalaryDataList = [];
 
-            langsDataList.push({"python": +langsDataSelected.python});
-            langsDataList.push({"sql": +langsDataSelected.sql});
-            langsDataList.push({"r": +langsDataSelected.r});
-            langsDataList.push({"sas": +langsDataSelected.sas});
-            langsDataList.push({"spark": +langsDataSelected.spark});
-            langsDataList.push({"java": langsDataSelected.java});
-            avgSalaryDataList.push({"avg_salary": +langsDataSelected.avg_salary});
+            langsDataList.push({"Python": +langsDataSelected.python});
+            langsDataList.push({"SQL": +langsDataSelected.sql});
+            langsDataList.push({"R": +langsDataSelected.r});
+            langsDataList.push({"SAS": +langsDataSelected.sas});
+            langsDataList.push({"Spark": +langsDataSelected.spark});
+            langsDataList.push({"Java": langsDataSelected.java});
+            avgSalaryDataList.push({"Average Salary": +langsDataSelected.avg_salary});
 
-            toolsDataList.push({"machine_learning": +toolsDataSelected.machine_learning});
-            toolsDataList.push({"hadoop": +toolsDataSelected.hadoop});
-            toolsDataList.push({"tableau": +toolsDataSelected.tableau});
+            toolsDataList.push({"Machine Learning": +toolsDataSelected.machine_learning});
+            toolsDataList.push({"Hadoop": +toolsDataSelected.hadoop});
+            toolsDataList.push({"Tableau": +toolsDataSelected.tableau});
 
-            console.log(langsDataList);
-            console.log(toolsDataList);
-            console.log(avgSalaryDataList);
+            // console.log(langsDataList);
+            // console.log(toolsDataList);
+            // console.log(avgSalaryDataList);
 
             var barSpacing = 15;
   
@@ -78,7 +78,6 @@ var chartGroup = svg.append("g")
                 }) 
                 .attr("height", function (d) { 
                     for (key in d) {
-                        console.log(d[key]);
                         return d[key]*8
                     }
                 }); 
@@ -156,8 +155,6 @@ var chartGroup = svg.append("g")
                     barGroup = renderBars(barGroup, currentData, barWidth, barSpacing);
                     barGroup = updateToolTip(chosenXAxis, barGroup, career);
 
-
-
                     if (chosenXAxis === "tools") {
                         toolsLabel
                             .classed("active", true)
@@ -199,6 +196,19 @@ function filterViz() {
 
     d3.event.preventDefault();
 
+    chartGroup.selectAll(".x-axis").remove();
+    chartGroup.selectAll(".y-axis").remove();
+    chartGroup.selectAll("rect").remove();
+    toolsLabel
+        .classed("active", true)
+        .classed("inactive", false);
+    languagesLabel
+        .classed("inactive", true)
+        .classed("active", false);  
+    avgSalaryLabel
+        .classed("inactive", true)
+        .classed("active", false);  
+
     userSelect = d3.select('#dropdown option:checked').text();
         if (userSelect === "Data Scientist")
             careerIndex = 2; 
@@ -209,9 +219,135 @@ function filterViz() {
         else
             throw new Error("Oops...user selection error");
 
-    langsData = langsData[careerIndex];
-    toolsData = toolsData[careerIndex];
+    langsDataSelected = langsData[careerIndex];
+    toolsDataSelected = toolsData[careerIndex];
 
+    langsDataList = [];
+            toolsDataList = [];
+            avgSalaryDataList = [];
+
+            langsDataList.push({"Python": +langsDataSelected.python});
+            langsDataList.push({"SQL": +langsDataSelected.sql});
+            langsDataList.push({"R": +langsDataSelected.r});
+            langsDataList.push({"SAS": +langsDataSelected.sas});
+            langsDataList.push({"Spark": +langsDataSelected.spark});
+            langsDataList.push({"Java": langsDataSelected.java});
+            avgSalaryDataList.push({"Average Salary": +langsDataSelected.avg_salary});
+
+            toolsDataList.push({"Machine Learning": +toolsDataSelected.machine_learning});
+            toolsDataList.push({"Hadoop": +toolsDataSelected.hadoop});
+            toolsDataList.push({"Tableau": +toolsDataSelected.tableau});
+
+            // console.log(langsDataList);
+            // console.log(toolsDataList);
+            // console.log(avgSalaryDataList);
+
+            var barSpacing = 15;
+  
+            var barWidth = (chartWidth - (barSpacing * (toolsDataList.length - 1))) / (toolsDataList.length); //play with these numbers
+
+            var barGroup = chartGroup.selectAll("rect")
+                .data(toolsDataList)
+                .enter()
+                .append("rect")
+                .classed("bar", true)
+                .attr("width", d => barWidth)
+                .attr("x", (d, i) => i * (barWidth + barSpacing))
+                .attr("y", function (d) { 
+                    for (key in d)   
+                        return (chartHeight - d[key]*8)
+                }) 
+                .attr("height", function (d) { 
+                    for (key in d) {
+                        console.log(d[key]);
+                        return d[key]*8
+                    }
+                }); 
+
+            var xPointScale = xScale(toolsDataList, barWidth, barSpacing);
+            var yLinearScale = yScale(toolsDataList);
+                
+            var bottomAxis = d3.axisBottom(xPointScale);
+            var leftAxis = d3.axisLeft(yLinearScale);
+
+            var xAxis = chartGroup.append("g")
+                .classed("x-axis", true)
+                .attr("transform", `translate(0, ${chartHeight})`)
+                .call(bottomAxis); 
+
+            var yAxis = chartGroup.append("g")
+                .classed("y-axis", true)
+                .call(leftAxis);   
+
+            var chosenXAxis = "tools";
+            barGroup = updateToolTip(chosenXAxis, barGroup, userSelect);
+
+            xLabelsGroup.selectAll("text")
+                .on("click", function() {
+                    
+                    var value = d3.select(this).attr("value");
+
+                    if (value !== chosenXAxis)  
+                        chosenXAxis = value;
+        
+                    if (chosenXAxis === "tools") 
+                        currentData = toolsDataList;
+                    else if (chosenXAxis === "languages")
+                        currentData = langsDataList; 
+                    else if (chosenXAxis === "avgSalary")
+                        currentData = avgSalaryDataList;
+                    else
+                        throw new Error("Oops...user selection error");
+                    
+                    barSpacing = 15;
+  
+                    barWidth = (chartWidth - (barSpacing * (currentData.length - 1))) / (currentData.length);
+
+                    xPointScale = xScale(currentData, barWidth, barSpacing);
+                    yLinearScale = yScale(currentData);
+
+                    xAxis = renderXAxis(xPointScale, xAxis);
+                    yAxis = renderYAxis(yLinearScale, yAxis);
+
+                    barGroup = renderBars(barGroup, currentData, barWidth, barSpacing);
+                    barGroup = updateToolTip(chosenXAxis, barGroup, userSelect);
+
+                    if (chosenXAxis === "tools") {
+                        toolsLabel
+                            .classed("active", true)
+                            .classed("inactive", false);
+                        languagesLabel
+                            .classed("inactive", true)
+                            .classed("active", false);  
+                        avgSalaryLabel
+                            .classed("inactive", true)
+                            .classed("active", false);  
+                    }
+                    else if (chosenXAxis === "languages") {
+                        languagesLabel
+                            .classed("active", true)
+                            .classed("inactive", false);
+                        avgSalaryLabel
+                            .classed("inactive", true)
+                            .classed("active", false);
+                        toolsLabel
+                            .classed("inactive", true)
+                            .classed("active", false);
+                    }
+                    else if (chosenXAxis === "avgSalary") {
+                        avgSalaryLabel
+                            .classed("active", true)
+                            .classed("inactive", false);
+                        toolsLabel
+                            .classed("inactive", true)
+                            .classed("active", false);
+                        languagesLabel
+                            .classed("inactive", true)
+                            .classed("active", false);
+                    }
+
+                
+                });
 }
 
 function xScale(methodData, barWidth, barSpacing) {
@@ -227,9 +363,17 @@ function xScale(methodData, barWidth, barSpacing) {
 
 function yScale(methodData) {
 
-    for (key in (d3.max(methodData))) {
-        maxValue = (d3.max(methodData))[key];
+for (data in methodData) {
+    var maxValue = 0;
+    for (key in (data)) {
+        if (maxValue < data[key]) {
+            maxValue = data[key];
+        }
+        console.log(maxValue);
+        console.log(methodData);
+        console.log(toolsDataList);
     }
+}
     var yLinearScale = d3.scaleLinear()
         .domain([0, maxValue*1.5]) 
         .range([chartHeight, 0]);
@@ -282,7 +426,7 @@ function updateToolTip(chosenXAxis, barGroup, career) {
     var bottomAxis = d3.axisBottom(newXScale);
   
     xAxis.transition()
-      .duration(1000)
+      .duration(800)
       .call(bottomAxis);
   
     return xAxis;
@@ -292,7 +436,7 @@ function updateToolTip(chosenXAxis, barGroup, career) {
     var leftAxis = d3.axisLeft(newYScale);
   
     yAxis.transition()
-      .duration(1000)
+      .duration(800)
       .call(leftAxis);
   
     return yAxis;
@@ -302,7 +446,7 @@ function updateToolTip(chosenXAxis, barGroup, career) {
 
     barGroup.remove();
 
-    //multipliers = [{scientistTools: 8}, {scientistLangs: 5.8}, {scientistSal: 0.0057}, {engineerTools:}, {engineerLangs:}, {engineerSal:}, {analystTools:}, {analystLangs:}, {analystSal:}];
+    //multipliers = [{scientistTools: 8}, {scientistLangs: 5.8}, {scientistSal: 0.0057}, {engineerTools: 1.826}, {engineerLangs: 4.643}, {engineerSal:}, {analystTools:}, {analystLangs:}, {analystSal:}];
     barGroup = chartGroup.selectAll("rect")
     .data(methodData)
     .enter()
@@ -312,11 +456,11 @@ function updateToolTip(chosenXAxis, barGroup, career) {
     .attr("x", (d, i) => i * (barWidth + barSpacing))
     .attr("y", function (d) { 
     for (key in d)    
-        return chartHeight - d[key]*(0.0057)//adjust multiplier as needed
+        return chartHeight - d[key]*0.0057
     }) 
     .attr("height", function (d) { 
     for (key in d) {
-        return d[key]*(0.0057)
+        return d[key]*0.0057
     }
     });
     return barGroup
