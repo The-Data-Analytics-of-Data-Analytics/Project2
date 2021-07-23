@@ -57,8 +57,8 @@ var chartGroup = svg.append("g")
             toolsDataList.push({"hadoop": +toolsData.hadoop});
             toolsDataList.push({"tableau": +toolsData.tableau});
 
-            // console.log(langsDataList);
-            // console.log(toolsDataList);
+            console.log(langsDataList);
+            console.log(toolsDataList);
             console.log(avgSalaryDataList);
 
             var barSpacing = 15;
@@ -73,14 +73,13 @@ var chartGroup = svg.append("g")
                 .attr("width", d => barWidth)
                 .attr("x", (d, i) => i * (barWidth + barSpacing))
                 .attr("y", function (d) { 
-                    for (key in (d3.max(toolsDataList))) {
-                        var maxValue = (d3.max(toolsDataList))[key];   
-                        return (chartHeight - maxValue)//adjust multiplier as needed
-                    }
+                    for (key in d)   
+                        return (chartHeight - d[key]*8)
                 }) 
                 .attr("height", function (d) { 
                     for (key in d) {
-                        return (d)[key]
+                        console.log(d[key]);
+                        return d[key]*8
                     }
                 }); 
 
@@ -257,10 +256,15 @@ function updateToolTip(chosenXAxis, barGroup, career) {
       .attr("class", "d3-tip")
       .html(function(d) {
         var value;
+        var currentKey;
         for (key in d) {
-            value = key; 
+            value = d[key];
+            currentKey = key; 
         }
-          return (`<h5>${career}</h5><br><h5>${xlabel}${value}</h5>`); 
+        if (chosenXAxis === "avgSalary")
+            return (`<p>${career}</p><hr><p>${xlabel} $${value}</p>`);
+        else
+            return (`<p>${career}</p><hr><p>${xlabel} ${currentKey}</p><hr><p>Frequency: ${value}%</p>`); 
       });                                                   
   
     barGroup.call(toolTip);
@@ -298,6 +302,7 @@ function updateToolTip(chosenXAxis, barGroup, career) {
 
     barGroup.remove();
 
+    //multipliers = [{scientistTools: 8}, {scientistLangs: 5.8}, {scientistSal: 0.0057}, {engineerTools:}, {engineerLangs:}, {engineerSal:}, {analystTools:}, {analystLangs:}, {analystSal:}];
     barGroup = chartGroup.selectAll("rect")
     .data(methodData)
     .enter()
@@ -306,14 +311,13 @@ function updateToolTip(chosenXAxis, barGroup, career) {
     .attr("width", d => barWidth)
     .attr("x", (d, i) => i * (barWidth + barSpacing))
     .attr("y", function (d) { 
-    for (key in (d3.max(methodData))) {
-        var maxValue = (d3.max(methodData))[key];   
-        return (chartHeight - maxValue *  1)//adjust multiplier as needed
-    }
+    for (key in d)    
+        return chartHeight - d[key]*(0.0057)//adjust multiplier as needed
     }) 
     .attr("height", function (d) { 
-    for (key in d)
-        return (d)[key]
+    for (key in d) {
+        return d[key]*(0.0057)
+    }
     });
     return barGroup
 }
