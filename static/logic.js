@@ -76,14 +76,13 @@ d3.json("../data/JSON/D3SummaryLangs.json").then(function(engineerTools) {
               layerIndex = "Scientist";
             else
               layerIndex = "Analyst";
-            var newMarker = L.marker(dataset.lat, dataset.long]); //change reference to data to fit the structure of the JSON
+            var newMarker = L.marker([dataset.lat, dataset.long]); //change reference to data to fit the structure of the JSON
             newMarker.addTo(layers[layerIndex]);
             newMarker.bindPopup("<p>Top Tools: " + topTools + "</p><hr><p>Top Languages: " + topLanguages + "</p><hr><p>Average Starting Salary: " + avgStartingSalary + "</p>"); //html table
-
-
-            
+           
       }
     });
+    
 });
 });
 });
