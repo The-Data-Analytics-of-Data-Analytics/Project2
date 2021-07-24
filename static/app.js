@@ -152,7 +152,7 @@ var chartGroup = svg.append("g")
                     yAxis = renderYAxis(yLinearScale, yAxis);
 
                     career = d3.select('#dropdown option:checked').text();
-                    barGroup = renderBars(barGroup, currentData, barWidth, barSpacing);
+                    barGroup = renderBars(barGroup, currentData, barWidth, barSpacing, career, chosenXAxis);
                     barGroup = updateToolTip(chosenXAxis, barGroup, career);
 
                     if (chosenXAxis === "tools") {
@@ -221,8 +221,8 @@ function filterViz() {
 
     langsDataSelected = langsData[careerIndex];
     toolsDataSelected = toolsData[careerIndex];
-
-    langsDataList = [];
+    console.log(langsData[0].avg_salary);
+            langsDataList = [];
             toolsDataList = [];
             avgSalaryDataList = [];
 
@@ -255,12 +255,11 @@ function filterViz() {
                 .attr("x", (d, i) => i * (barWidth + barSpacing))
                 .attr("y", function (d) { 
                     for (key in d)   
-                        return (chartHeight - d[key]*8)
+                        return (chartHeight - d[key]*5.3)
                 }) 
                 .attr("height", function (d) { 
                     for (key in d) {
-                        console.log(d[key]);
-                        return d[key]*8
+                        return d[key]*5.3
                     }
                 }); 
 
@@ -309,7 +308,7 @@ function filterViz() {
                     xAxis = renderXAxis(xPointScale, xAxis);
                     yAxis = renderYAxis(yLinearScale, yAxis);
 
-                    barGroup = renderBars(barGroup, currentData, barWidth, barSpacing);
+                    barGroup = renderBars(barGroup, currentData, barWidth, barSpacing, userSelect, chosenXAxis);
                     barGroup = updateToolTip(chosenXAxis, barGroup, userSelect);
 
                     if (chosenXAxis === "tools") {
@@ -362,18 +361,15 @@ function xScale(methodData, barWidth, barSpacing) {
 }
 
 function yScale(methodData) {
-
-for (data in methodData) {
     var maxValue = 0;
-    for (key in (data)) {
-        if (maxValue < data[key]) {
-            maxValue = data[key];
-        }
-        console.log(maxValue);
-        console.log(methodData);
-        console.log(toolsDataList);
+    for (key in methodData) {
+        for (k in methodData[key]) {
+            if (maxValue < methodData[key][k]) { 
+                maxValue = methodData[key][k];
+            }   
+        }    
     }
-}
+
     var yLinearScale = d3.scaleLinear()
         .domain([0, maxValue*1.5]) 
         .range([chartHeight, 0]);
@@ -442,11 +438,42 @@ function updateToolTip(chosenXAxis, barGroup, career) {
     return yAxis;
   }
 
-  function renderBars(barGroup, methodData, barWidth, barSpacing ) {
+  function renderBars(barGroup, methodData, barWidth, barSpacing, career, chosenXAxis) {
 
     barGroup.remove();
 
-    //multipliers = [{scientistTools: 8}, {scientistLangs: 5.8}, {scientistSal: 0.0057}, {engineerTools: 1.826}, {engineerLangs: 4.643}, {engineerSal:}, {analystTools:}, {analystLangs:}, {analystSal:}];
+    //var scales = [{scientistTools: 8}, {scientistLangs: 5.8}, {scientistSal: 0.0057}, {engineerTools: 1.826}, {engineerLangs: 4.643}, {engineerSal: 0.003}, {analystTools: 10}, {analystLangs: 5.3}, {analystSal: 0.0052}];
+    var scale = 0.0;
+
+    if (career === "Data Scientist") {
+        if (chosenXAxis === "tools")
+            scale = 8;
+        else if (chosenXAxis === "languages")
+            scale = 5.75;
+        else 
+            scale = 0.0057; 
+    }
+    else if (career === "Data Engineer") {
+        if (chosenXAxis === "tools")
+            scale = 1.9;
+        else if (chosenXAxis === "languages")
+            scale = 4.643;
+        else 
+            scale = 0.003; 
+    }
+    else if (career === "Data Analyst") {
+        if (chosenXAxis === "tools")
+            scale = 10.2;
+        else if (chosenXAxis === "languages")
+            scale = 5.3;
+        else 
+            scale = 0.0052; 
+    }
+    else 
+        throw new Error("Error processing scaler...");
+
+
+    
     barGroup = chartGroup.selectAll("rect")
     .data(methodData)
     .enter()
@@ -456,11 +483,11 @@ function updateToolTip(chosenXAxis, barGroup, career) {
     .attr("x", (d, i) => i * (barWidth + barSpacing))
     .attr("y", function (d) { 
     for (key in d)    
-        return chartHeight - d[key]*0.0057
+        return (chartHeight - (d[key]*scale))
     }) 
     .attr("height", function (d) { 
     for (key in d) {
-        return d[key]*0.0057
+        return (d[key]*scale)
     }
     });
     return barGroup
