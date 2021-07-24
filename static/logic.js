@@ -156,8 +156,17 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
           if (typeof(topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]) === "undefined")
             topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`] = "No top languages here";
           
-          console.log(marker);
-          marker.bindPopup("<p>CAREER PATH: " + "</p><hr><p>TOP TOOLS: " + ((topTools[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase() + "</p><hr><p>TOP LANGUAGES: " + ((topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase());
+          console.log(layer);
+          if (j < 2) {
+            marker.bindPopup("<p>CAREER PATH: DATA ENGINEER" + "</p><hr><p>TOP TOOLS: " + ((topTools[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase() + "</p><hr><p>TOP LANGUAGES: " + ((topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase());
+          }
+          else if (j < 4) {
+            marker.bindPopup("<p>CAREER PATH: DATA SCIENTIST" + "</p><hr><p>TOP TOOLS: " + ((topTools[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase() + "</p><hr><p>TOP LANGUAGES: " + ((topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase());
+          }
+          else {
+            marker.bindPopup("<p>CAREER PATH: DATA ANALYST" + "</p><hr><p>TOP TOOLS: " + ((topTools[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase() + "</p><hr><p>TOP LANGUAGES: " + ((topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase());
+          }
+         
           marker.addTo(layer);
           });
         
