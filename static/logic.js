@@ -4,7 +4,7 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
       d3.json("static/scientistLangs.json").then(function(scientistLangs) {
         d3.json("static/analystTools.json").then(function(analystTools)  {
           d3.json("static/analystLangs.json").then(function(analystLangs) {
-            
+    
     var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
       attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
       tileSize: 500,
@@ -62,41 +62,99 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
       L.control.layers(baseMaps, overlays, {collapsed: false}).addTo(map);
 
         var datasets = [engineerTools, engineerLangs, scientistTools, scientistLangs, analystTools, analystLangs];
-        var topTools = [];
-        var topLanguages = [];
-        var coords = [];
 
-        datasets.forEach( function (dataset, j) {
-          for (var i = 1; i < dataset.length; i++) { 
-            if (j < 2)
+        datasets.forEach(function (dataset, j) {
+          var topEngineerTools = [];
+          var topEngineerLanguages = [];
+          var topScientistTools = [];
+          var topScientistLanguages = [];
+          var topAnalystTools = [];
+          var topAnalystLanguages = [];
+          var Locations = [];
+          var markers = [];
+          var topTools = [];
+          var topLanguages = [];
+
+          switch (j) {
+            case 0:
+              currentList = topEngineerTools;
+              topTools = topEngineerTools;
               layer = layers.Engineer;
-            else if (j < 4)
+              break
+            case 1:
+              currentList = topEngineerLanguages;
+              topLanguages = topEngineerLanguages;
+              layer = layers.Engineer;
+              break
+            case 2:
+              currentList = topScientistTools;
+              topTools = topScientistTools;
               layer = layers.Scientist;
-            else
+              break
+            case 3:
+              currentList = topScientistLanguages;
+              layer = layers.Scientist;
+              topLanguages = topScientistLanguages;
+              break
+            case 4:
+              currentList = topAnalystTools;
+              topTools = topAnalystTools;
               layer = layers.Analyst;
+              break
+            case 5:
+              currentList = topAnalystLanguages;
+              topLanguages = topAnalystLanguages;
+              layer = layers.Analyst;
+              break
+            default:
+              throw new Error("Switch error...");  
+          }
+
+          for (var i = 1; i < dataset.length; i++) {
             
-            dataset[i].lat = +dataset[i].lat;
-            dataset[i].long = +dataset[i].long;
-  
             if (dataset[i].lat === null || isNaN(dataset[i].lat))
                 continue
             if (dataset[i].long === null || isNaN(dataset[i].long))
                 continue
 
-            if (topTools.length === 0 && i > 0)
-              topTools.push("None found here");
-  
-            if (topLanguages.length === 0 && i > 0)
-              topLanguages.push("None found here");
+            dataset[i].lat = +dataset[i].lat;
+            dataset[i].long = +dataset[i].long;
+
+            var Location = dataset[i].Location;
+
+            for (key in dataset[i]) {
+              if (typeof(currentList[`${+dataset[i].lat}, ${+dataset[i].long}`]) === "undefined" && key !== "lat" && key !== "long" && key !== "_id" && key !== "Location") {
+                currentList[`${+dataset[i].lat}, ${+dataset[i].long}`] = [key];
+              }
+              else if ((+dataset[i][key] === 1) && !(currentList[`${+dataset[i].lat}, ${+dataset[i].long}`].includes(key)) && key !== "lat" && key !== "long" && key !== "_id" && key !== "Location") {
+                currentList[`${+dataset[i].lat}, ${+dataset[i].long}`].push(key);
+              }
+              else { 
+                  continue
+              }
+            }     
             
-            var coord = [dataset[i].lat, dataset[i].long];  
-            if (coord in coords && i > 0)
-              coord = 0;
-              
-            var newMarker = L.marker([dataset[i].lat, dataset[i].long]); 
-            newMarker.addTo(layer);
-            newMarker.bindPopup("<p>Top Tools: " + topTools + "</p><hr><p>Top Languages: " + topLanguages); // + "</p><hr><p>Average Starting Salary: " + avgStartingSalary + "</p>"); //html table
-      }
+            
+
+            if (!Locations.includes(Location)) {
+              var newMarker = L.marker([dataset[i].lat, dataset[i].long]);
+              markers.push(newMarker);   
+            }
+
+          } 
+          
+          markers.forEach(function (marker) {
+          
+          if (typeof(topTools[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]) === "undefined")
+            topTools[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`] = "No top tools here";
+          if (typeof(topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]) === "undefined")
+            topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`] = "No top languages here";
+          
+          
+          marker.bindPopup("<p>TOP TOOLS: " + ((topTools[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase() + "</p><hr><p>TOP LANGUAGES: " + ((topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase());
+          marker.addTo(layer);
+          });
+        
     });
     
 });
