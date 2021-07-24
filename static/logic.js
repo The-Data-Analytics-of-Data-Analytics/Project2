@@ -171,9 +171,13 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
         
     });
     
+    var button = L.control({
+      position: "bottomright"
+    });
+
     button.onAdd = function() {
       var div = L.DomUtil.create("div", "button");
-      div.innerHTML = "<center><a href='http://localhost:5000/'><button type='button' class='btn btn-primary btn-lg'>Click here to return to the home page!</button></a></center>"
+      div.innerHTML = "<center><a href='http://localhost:5000/'><button type='button' class='btn btn-primary btn-md'>Click here to return to the home page!</button></a></center>"
       return div;
     };
     
@@ -186,7 +190,5 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
 });
 });
       
-var button = L.control({
-  position: "bottomright"
-});
+
 

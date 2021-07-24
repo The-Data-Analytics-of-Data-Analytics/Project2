@@ -6,19 +6,19 @@ html {
 
 .active {
     font-weight: bold;
-    fill: rgb(97, 16, 16);
+    fill: #15bedb;
     transition: fill 0.3s ease-out; 
     text-anchor: middle;
   }
   
 .inactive {
-    fill: #e93e3e;
+    fill: #bcebf1;
     transition: fill 0.3s ease-out; 
     text-anchor: middle;
   }
 
   .inactive:hover {
-    fill:rgb(97, 16, 16);
+    fill:#15bedb;
     cursor: pointer;
   }
 
@@ -27,31 +27,31 @@ html {
     font-size: 12px;
     line-height: 1;
     line-height: 1.5em;
-    color: rgb(97, 16, 16);
+    color: rgb(43, 58, 199);
     text-align: center;
     text-transform: capitalize;
-    background: #e6b1b1;
+    background: #15bedb;
     border-radius: 4px;
   }
 
   .bar {
-    fill: #af3549;
-    stroke: #d8a6a6;
+    fill: #3244e9;
+    stroke: #082574;
     stroke-width: 3px;
   }
   
   .bar:hover {
-    fill: #af3549;
-    stroke: #b90606;
+    fill: #15bedb;
+    stroke: #186e88;
     stroke-width: 4px;
   }
 
   .y-axis {
-    color:rgb(97, 16, 16);  
+    color:#15bedb;
   }
 
   .x-axis {
-    color:rgb(97, 16, 16);  
+    color:#15bedb;  
   }
 
   .D3 {
@@ -60,14 +60,31 @@ html {
   }
 
   html body {
-    /*background-image: url("../media/lightened-collection-newspapers.png");*/
+    background-image: url("backgroundImageLightened.jpg");
     background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-size: auto;
   }
 
   html body .jumbotron {
-    background-color: rgba(167, 204, 167, 0.97);
-    color: green;
-    width:fit-content;
+    background-color: rgba(129, 105, 236, 0.97);
+    width:500px;
 }
+
+html body .btn {
+  background-color: rgba(129, 105, 236, 0.97);
+  color: rgb(193, 182, 231);
+}
+
+html body .btn:hover {
+  background-color: rgba(129, 105, 236, 0.97);
+  color: rgb(234, 233, 236);
+}
+
+html body .btn:active {
+  background-color: rgba(145, 52, 233, 0.97);
+  color: rgb(234, 233, 236);
+}
+
+html body h1, h2, h3, h4, h5 {
+  color:rgb(178, 191, 226)
+} 
