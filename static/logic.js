@@ -64,9 +64,9 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
         var datasets = [engineerTools, engineerLangs, scientistTools, scientistLangs, analystTools, analystLangs];
         var topTools = [];
         var topLanguages = [];
+        var coords = [];
 
         datasets.forEach( function (dataset, j) {
-        for (var i = 1; i < dataset.length; i++) { 
           for (var i = 1; i < dataset.length; i++) { 
             if (j < 2)
               layer = layers.Engineer;
@@ -83,17 +83,19 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
             if (dataset[i].long === null || isNaN(dataset[i].long))
                 continue
 
-            if (topTools.length === 0)
+            if (topTools.length === 0 && i > 0)
               topTools.push("None found here");
   
-            if (topLanguages.length === 0)
+            if (topLanguages.length === 0 && i > 0)
               topLanguages.push("None found here");
-
-            var newMarker = L.marker([dataset[i].lat, dataset[i].long]); //change reference to data to fit the structure of the JSON
+            
+            var coord = [dataset[i].lat, dataset[i].long];  
+            if (coord in coords && i > 0)
+              coord = 0;
+              
+            var newMarker = L.marker([dataset[i].lat, dataset[i].long]); 
             newMarker.addTo(layer);
             newMarker.bindPopup("<p>Top Tools: " + topTools + "</p><hr><p>Top Languages: " + topLanguages); // + "</p><hr><p>Average Starting Salary: " + avgStartingSalary + "</p>"); //html table
-           
-        }
       }
     });
     
