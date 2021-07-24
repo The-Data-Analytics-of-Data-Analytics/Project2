@@ -48,10 +48,14 @@ html {
 
   .y-axis {
     color:#15bedb;
+    font-weight: bold;
+    font-size: x-large;
   }
 
   .x-axis {
-    color:#15bedb;  
+    color:#15bedb;
+    font-weight: bold;
+    font-size: x-large; 
   }
 
   .D3 {
