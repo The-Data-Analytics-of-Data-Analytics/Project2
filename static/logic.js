@@ -79,31 +79,37 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
             case 0:
               currentList = topEngineerTools;
               topTools = topEngineerTools;
+              topLanguages = topEngineerLanguages;
               layer = layers.Engineer;
               break
             case 1:
               currentList = topEngineerLanguages;
               topLanguages = topEngineerLanguages;
+              topTools = topEngineerTools;
               layer = layers.Engineer;
               break
             case 2:
               currentList = topScientistTools;
               topTools = topScientistTools;
+              topLanguages = topScientistLanguages;
               layer = layers.Scientist;
               break
             case 3:
               currentList = topScientistLanguages;
               layer = layers.Scientist;
+              topTools = topScientistTools;
               topLanguages = topScientistLanguages;
               break
             case 4:
               currentList = topAnalystTools;
               topTools = topAnalystTools;
+              topLanguages = topAnalystLanguages;
               layer = layers.Analyst;
               break
             case 5:
               currentList = topAnalystLanguages;
               topLanguages = topAnalystLanguages;
+              topTools = topAnalystTools;
               layer = layers.Analyst;
               break
             default:
@@ -123,10 +129,10 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
             var Location = dataset[i].Location;
 
             for (key in dataset[i]) {
-              if (typeof(currentList[`${+dataset[i].lat}, ${+dataset[i].long}`]) === "undefined" && key !== "lat" && key !== "long" && key !== "_id" && key !== "Location") {
+              if ((+dataset[i][key] === 1) && typeof(currentList[`${+dataset[i].lat}, ${+dataset[i].long}`]) === "undefined" && key !== "lat" && key !== "long" && key !== "_id" && key !== "Location" && key !== "Job_Type") {
                 currentList[`${+dataset[i].lat}, ${+dataset[i].long}`] = [key];
               }
-              else if ((+dataset[i][key] === 1) && !(currentList[`${+dataset[i].lat}, ${+dataset[i].long}`].includes(key)) && key !== "lat" && key !== "long" && key !== "_id" && key !== "Location") {
+              else if ((+dataset[i][key] === 1) && !(currentList[`${+dataset[i].lat}, ${+dataset[i].long}`].includes(key)) && key !== "lat" && key !== "long" && key !== "_id" && key !== "Location" && key !== "Job_Type") {
                 currentList[`${+dataset[i].lat}, ${+dataset[i].long}`].push(key);
               }
               else { 
@@ -150,8 +156,8 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
           if (typeof(topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]) === "undefined")
             topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`] = "No top languages here";
           
-          
-          marker.bindPopup("<p>TOP TOOLS: " + ((topTools[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase() + "</p><hr><p>TOP LANGUAGES: " + ((topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase());
+          console.log(marker);
+          marker.bindPopup("<p>CAREER PATH: " + "</p><hr><p>TOP TOOLS: " + ((topTools[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase() + "</p><hr><p>TOP LANGUAGES: " + ((topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase());
           marker.addTo(layer);
           });
         
