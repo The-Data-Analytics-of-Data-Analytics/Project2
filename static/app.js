@@ -221,7 +221,6 @@ function filterViz() {
 
     langsDataSelected = langsData[careerIndex];
     toolsDataSelected = toolsData[careerIndex];
-    console.log(langsData[0].avg_salary);
             langsDataList = [];
             toolsDataList = [];
             avgSalaryDataList = [];
@@ -238,13 +237,24 @@ function filterViz() {
             toolsDataList.push({"Hadoop": +toolsDataSelected.hadoop});
             toolsDataList.push({"Tableau": +toolsDataSelected.tableau});
 
-            // console.log(langsDataList);
-            // console.log(toolsDataList);
-            // console.log(avgSalaryDataList);
-
             var barSpacing = 15;
   
             var barWidth = (chartWidth - (barSpacing * (toolsDataList.length - 1))) / (toolsDataList.length); //play with these numbers
+            
+            var scale = 0;
+
+            if (userSelect === "Data Scientist") {
+                scale = 8;
+            }
+            else if (userSelect === "Data Engineer") {
+                scale = 5.3;
+            }
+            else if (userSelect === "Data Analyst") {
+                scale = 10.2; 
+            }
+            else 
+                throw new Error("Error processing scaler...");
+
 
             var barGroup = chartGroup.selectAll("rect")
                 .data(toolsDataList)
@@ -255,11 +265,11 @@ function filterViz() {
                 .attr("x", (d, i) => i * (barWidth + barSpacing))
                 .attr("y", function (d) { 
                     for (key in d)   
-                        return (chartHeight - d[key]*5.3)
+                        return (chartHeight - d[key]*scale)
                 }) 
                 .attr("height", function (d) { 
                     for (key in d) {
-                        return d[key]*5.3
+                        return d[key]*scale
                     }
                 }); 
 
@@ -455,7 +465,7 @@ function updateToolTip(chosenXAxis, barGroup, career) {
     }
     else if (career === "Data Engineer") {
         if (chosenXAxis === "tools")
-            scale = 1.9;
+            scale = 5.3;
         else if (chosenXAxis === "languages")
             scale = 4.643;
         else 
