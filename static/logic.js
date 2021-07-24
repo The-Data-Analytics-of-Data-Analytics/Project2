@@ -156,7 +156,6 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
           if (typeof(topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]) === "undefined")
             topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`] = "No top languages here";
           
-          console.log(layer);
           if (j < 2) {
             marker.bindPopup("<p>CAREER PATH: DATA ENGINEER" + "</p><hr><p>TOP TOOLS: " + ((topTools[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase() + "</p><hr><p>TOP LANGUAGES: " + ((topLanguages[`${marker["_latlng"]["lat"]}, ${marker["_latlng"]["lng"]}`]).toString()).toUpperCase());
           }
@@ -172,6 +171,14 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
         
     });
     
+    button.onAdd = function() {
+      var div = L.DomUtil.create("div", "button");
+      div.innerHTML = "<center><a href='http://localhost:5000/'><button type='button' class='btn btn-primary btn-lg'>Click here to return to the home page!</button></a></center>"
+      return div;
+    };
+    
+    button.addTo(map);
+
 });
 });
 });
@@ -179,3 +186,7 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
 });
 });
       
+var button = L.control({
+  position: "bottomright"
+});
+
