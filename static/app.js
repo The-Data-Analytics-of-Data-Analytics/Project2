@@ -57,10 +57,6 @@ var chartGroup = svg.append("g")
             toolsDataList.push({"Hadoop": +toolsDataSelected.hadoop});
             toolsDataList.push({"Tableau": +toolsDataSelected.tableau});
 
-            // console.log(langsDataList);
-            // console.log(toolsDataList);
-            // console.log(avgSalaryDataList);
-
             var barSpacing = 15;
   
             var barWidth = (chartWidth - (barSpacing * (toolsDataList.length - 1))) / (toolsDataList.length); //play with these numbers
@@ -247,7 +243,7 @@ function filterViz() {
                 scale = 8;
             }
             else if (userSelect === "Data Engineer") {
-                scale = 5.3;
+                scale = 5.65;
             }
             else if (userSelect === "Data Analyst") {
                 scale = 10.2; 
@@ -459,15 +455,15 @@ function updateToolTip(chosenXAxis, barGroup, career) {
         if (chosenXAxis === "tools")
             scale = 8;
         else if (chosenXAxis === "languages")
-            scale = 5.75;
+            scale = 5.45;
         else 
             scale = 0.0057; 
     }
     else if (career === "Data Engineer") {
         if (chosenXAxis === "tools")
-            scale = 5.3;
+            scale = 5.65;
         else if (chosenXAxis === "languages")
-            scale = 4.643;
+            scale = 4.8;
         else 
             scale = 0.003; 
     }
