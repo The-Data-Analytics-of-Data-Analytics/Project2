@@ -1,0 +1,28 @@
+[{
+  "_id": {
+    "$oid": "60fb4596c9ed0680b717263d"
+  },
+  "Job_Type": "data_engineer",
+  "machine_learning": "21",
+  "hadoop": "55",
+  "tableau": "15",
+  "avg_salary": "104372"
+},{
+  "_id": {
+    "$oid": "60fb4596c9ed0680b717263e"
+  },
+  "Job_Type": "data_analyst",
+  "machine_learning": "9",
+  "hadoop": "7",
+  "tableau": "30",
+  "avg_salary": "60024"
+},{
+  "_id": {
+    "$oid": "60fb4596c9ed0680b717263f"
+  },
+  "Job_Type": "data_scientist",
+  "machine_learning": "40",
+  "hadoop": "30",
+  "tableau": "22",
+  "avg_salary": "54694"
+}]
