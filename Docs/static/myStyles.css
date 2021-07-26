@@ -1,0 +1,94 @@
+#careerMap,
+body,
+html {
+  height: 100%;
+}
+
+.active {
+    font-weight: bold;
+    fill: #15bedb;
+    transition: fill 0.3s ease-out; 
+    text-anchor: middle;
+  }
+  
+.inactive {
+    fill: #bcebf1;
+    transition: fill 0.3s ease-out; 
+    text-anchor: middle;
+  }
+
+  .inactive:hover {
+    fill:#15bedb;
+    cursor: pointer;
+  }
+
+  .d3-tip {
+    padding: 6px;
+    font-size: 12px;
+    line-height: 1;
+    line-height: 1.5em;
+    color: rgb(43, 58, 199);
+    text-align: center;
+    text-transform: capitalize;
+    background: #15bedb;
+    border-radius: 4px;
+  }
+
+  .bar {
+    fill: #3244e9;
+    stroke: #082574;
+    stroke-width: 3px;
+  }
+  
+  .bar:hover {
+    fill: #15bedb;
+    stroke: #186e88;
+    stroke-width: 4px;
+  }
+
+  .y-axis {
+    color:#15bedb;
+    font-weight: bold;
+    font-size: x-large;
+  }
+
+  .x-axis {
+    color:#15bedb;
+    font-weight: bold;
+    font-size: x-large; 
+  }
+
+  .D3 {
+    display: block;
+    margin: 0;
+  }
+
+  html body {
+    background-image: url("backgroundImageLightened.jpg");
+    background-position: center;
+    background-size: cover;
+  }
+
+  html body .jumbotron {
+    background-color: rgba(129, 105, 236, 0.97);
+    width:500px;
+}
+
+html body .btn {
+  background-color: rgba(129, 105, 236, 0.97);
+  color: rgb(193, 182, 231);
+}
+
+html body .btn:hover {
+  background-color: rgba(129, 105, 236, 0.97);
+  color: rgb(234, 233, 236);
+}
+
+html body .btn:active {
+  background-color: rgba(145, 52, 233, 0.97);
+  color: rgb(234, 233, 236);
+}
+
+html body h1, h2, h3, h4, h5 {
+  color:rgb(178, 191, 226)
+} 
