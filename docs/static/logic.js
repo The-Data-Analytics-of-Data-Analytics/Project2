@@ -1,9 +1,9 @@
-d3.json("static/engineerTools.json").then(function(engineerTools) {
-  d3.json("static/engineerLangs.json").then(function(engineerLangs) {
-    d3.json("static/scientistTools.json").then(function(scientistTools) {
-      d3.json("static/scientistLangs.json").then(function(scientistLangs) {
-        d3.json("static/analystTools.json").then(function(analystTools)  {
-          d3.json("static/analystLangs.json").then(function(analystLangs) {
+d3.json("engineerTools.json").then(function(engineerTools) {
+  d3.json("engineerLangs.json").then(function(engineerLangs) {
+    d3.json("scientistTools.json").then(function(scientistTools) {
+      d3.json("scientistLangs.json").then(function(scientistLangs) {
+        d3.json("analystTools.json").then(function(analystTools)  {
+          d3.json("analystLangs.json").then(function(analystLangs) {
     
     var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
       attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
@@ -205,7 +205,7 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
 
     button.onAdd = function() {
       var div = L.DomUtil.create("div", "button");
-      div.innerHTML = "<center><a href='http://localhost:5000/'><button type='button' class='btn btn-primary btn-md'>Click here to return to the home page!</button></a></center>"
+      div.innerHTML = "<center><a href='index.html'><button type='button' class='btn btn-primary btn-md'>Click here to return to the home page!</button></a></center>"
       return div;
     };
     

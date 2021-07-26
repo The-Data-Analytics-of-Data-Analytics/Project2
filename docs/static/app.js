@@ -18,10 +18,10 @@ var svg = d3.select(".D3")
 var chartGroup = svg.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    d3.json("../static/D3SummaryLangs.json").then(function(langsData, err) {
+    d3.json("D3SummaryLangs.json").then(function(langsData, err) {
         if (err) throw err;
               
-    d3.json("../static/D3SummaryTools.json").then(function(toolsData, err) {
+    d3.json("D3SummaryTools.json").then(function(toolsData, err) {
         if (err) throw err;
           
         var careers = ["Data Scientist", "Data Engineer", "Data Analyst"];
