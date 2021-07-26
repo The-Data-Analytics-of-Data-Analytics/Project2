@@ -178,29 +178,22 @@ d3.json("static/engineerTools.json").then(function(engineerTools) {
     
     map.on('overlayadd', function(event)
     {
-      console.log("Clicked on " + event.name)
       if (event.name == "Data Engineer" && map.hasLayer(layers.Scientist)) {
-        console.log("remove Data Scientist");
         removeWithTimeout(layers.Scientist);
       }
       if (event.name == "Data Engineer" && map.hasLayer(layers.Analyst)) {
-        console.log("remove Data Analyst");
         removeWithTimeout(layers.Analyst);
       }
       if (event.name == "Data Scientist" && map.hasLayer(layers.Engineer)) {
-        console.log("remove Data Engineer");
         removeWithTimeout(layers.Engineer);
       }
       if (event.name == "Data Scientist" && map.hasLayer(layers.Analyst)) {
-        console.log("remove Data Analyst");
         removeWithTimeout(layers.Analyst);
       }
       if (event.name == "Data Analyst" && map.hasLayer(layers.Scientist)) {
-        console.log("remove Data Scientist");
         removeWithTimeout(layers.Scientist);
       }
       if (event.name == "Data Analyst" && map.hasLayer(layers.Engineer)) {
-        console.log("remove Data Engineer");
         removeWithTimeout(layers.Analyst);
       }
     });

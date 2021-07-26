@@ -434,7 +434,7 @@ function updateToolTip(chosenXAxis, barGroup, career) {
     return barGroup
 }
 
-function classAxes (chosenXAxis) {
+function classAxes(chosenXAxis) {
 if (chosenXAxis === "tools") {
     toolsLabel
         .classed("active", true)
