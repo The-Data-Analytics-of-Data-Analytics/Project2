@@ -50,7 +50,7 @@ var chartGroup = svg.append("g")
             langsDataList.push({"R": +langsDataSelected.r});
             langsDataList.push({"SAS": +langsDataSelected.sas});
             langsDataList.push({"Spark": +langsDataSelected.spark});
-            langsDataList.push({"Java": langsDataSelected.java});
+            langsDataList.push({"Java": +langsDataSelected.java});
             avgSalaryDataList.push({"Average Salary": +langsDataSelected.avg_salary});
 
             toolsDataList.push({"Machine Learning": +toolsDataSelected.machine_learning});
@@ -448,7 +448,6 @@ function updateToolTip(chosenXAxis, barGroup, career) {
 
     barGroup.remove();
 
-    //var scales = [{scientistTools: 8}, {scientistLangs: 5.8}, {scientistSal: 0.0057}, {engineerTools: 1.826}, {engineerLangs: 4.643}, {engineerSal: 0.003}, {analystTools: 10}, {analystLangs: 5.3}, {analystSal: 0.0052}];
     var scale = 0.0;
 
     if (career === "Data Scientist") {
