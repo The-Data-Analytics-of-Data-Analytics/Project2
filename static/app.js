@@ -59,7 +59,7 @@ var chartGroup = svg.append("g")
 
             var barSpacing = 15;
   
-            var barWidth = (chartWidth - (barSpacing * (toolsDataList.length - 1))) / (toolsDataList.length); //play with these numbers
+            var barWidth = (chartWidth - (barSpacing * (toolsDataList.length - 1))) / (toolsDataList.length); 
 
             var barGroup = chartGroup.selectAll("rect")
                 .data(toolsDataList)
@@ -94,7 +94,7 @@ var chartGroup = svg.append("g")
                 .call(leftAxis);   
                     
             var xLabelsGroup = chartGroup.append("g")
-                .attr("transform", `translate(${chartWidth / 2}, ${chartHeight + 30})`);
+                .attr("transform", `translate(${chartWidth / 2}, ${chartHeight + 40})`);
                 
             var toolsLabel = xLabelsGroup.append("text")
                 .attr("x", 0)
@@ -151,39 +151,7 @@ var chartGroup = svg.append("g")
                     barGroup = renderBars(barGroup, currentData, barWidth, barSpacing, career, chosenXAxis);
                     barGroup = updateToolTip(chosenXAxis, barGroup, career);
 
-                    if (chosenXAxis === "tools") {
-                        toolsLabel
-                            .classed("active", true)
-                            .classed("inactive", false);
-                        languagesLabel
-                            .classed("inactive", true)
-                            .classed("active", false);  
-                        avgSalaryLabel
-                            .classed("inactive", true)
-                            .classed("active", false);  
-                    }
-                    else if (chosenXAxis === "languages") {
-                        languagesLabel
-                            .classed("active", true)
-                            .classed("inactive", false);
-                        avgSalaryLabel
-                            .classed("inactive", true)
-                            .classed("active", false);
-                        toolsLabel
-                            .classed("inactive", true)
-                            .classed("active", false);
-                    }
-                    else if (chosenXAxis === "avgSalary") {
-                        avgSalaryLabel
-                            .classed("active", true)
-                            .classed("inactive", false);
-                        toolsLabel
-                            .classed("inactive", true)
-                            .classed("active", false);
-                        languagesLabel
-                            .classed("inactive", true)
-                            .classed("active", false);
-                    }
+                    classAxes(chosenXAxis);
 
                     });        
 
@@ -317,61 +285,29 @@ function filterViz() {
                     barGroup = renderBars(barGroup, currentData, barWidth, barSpacing, userSelect, chosenXAxis);
                     barGroup = updateToolTip(chosenXAxis, barGroup, userSelect);
 
-                    if (chosenXAxis === "tools") {
-                        toolsLabel
-                            .classed("active", true)
-                            .classed("inactive", false);
-                        languagesLabel
-                            .classed("inactive", true)
-                            .classed("active", false);  
-                        avgSalaryLabel
-                            .classed("inactive", true)
-                            .classed("active", false);  
-                    }
-                    else if (chosenXAxis === "languages") {
-                        languagesLabel
-                            .classed("active", true)
-                            .classed("inactive", false);
-                        avgSalaryLabel
-                            .classed("inactive", true)
-                            .classed("active", false);
-                        toolsLabel
-                            .classed("inactive", true)
-                            .classed("active", false);
-                    }
-                    else if (chosenXAxis === "avgSalary") {
-                        avgSalaryLabel
-                            .classed("active", true)
-                            .classed("inactive", false);
-                        toolsLabel
-                            .classed("inactive", true)
-                            .classed("active", false);
-                        languagesLabel
-                            .classed("inactive", true)
-                            .classed("active", false);
-                    }
+                    classAxes(chosenXAxis);
 
                 
                 });
 }
 
 function xScale(methodData, barWidth, barSpacing) {
-    var xScale = d3.scalePoint()
+    var xPointScale = d3.scalePoint()
         .domain(methodData.map(function (d) {
             for (key in d) {
                 return key 
             }  
         }))
         .range([barWidth/2, ((methodData.length - 1)*(barWidth + barSpacing) + barWidth/2)]);
-    return xScale;
+    return xPointScale;
 }
 
 function yScale(methodData) {
     var maxValue = 0;
-    for (key in methodData) {
-        for (k in methodData[key]) {
-            if (maxValue < methodData[key][k]) { 
-                maxValue = methodData[key][k];
+    for (index in methodData) {
+        for (key in methodData[index]) {
+            if (maxValue < methodData[index][key]) { 
+                maxValue = methodData[index][key];
             }   
         }    
     }
@@ -498,5 +434,40 @@ function updateToolTip(chosenXAxis, barGroup, career) {
     return barGroup
 }
 
+function classAxes (chosenXAxis) {
+if (chosenXAxis === "tools") {
+    toolsLabel
+        .classed("active", true)
+        .classed("inactive", false);
+    languagesLabel
+        .classed("inactive", true)
+        .classed("active", false);  
+    avgSalaryLabel
+        .classed("inactive", true)
+        .classed("active", false);  
+}
+else if (chosenXAxis === "languages") {
+    languagesLabel
+        .classed("active", true)
+        .classed("inactive", false);
+    avgSalaryLabel
+        .classed("inactive", true)
+        .classed("active", false);
+    toolsLabel
+        .classed("inactive", true)
+        .classed("active", false);
+}
+else if (chosenXAxis === "avgSalary") {
+    avgSalaryLabel
+        .classed("active", true)
+        .classed("inactive", false);
+    toolsLabel
+        .classed("inactive", true)
+        .classed("active", false);
+    languagesLabel
+        .classed("inactive", true)
+        .classed("active", false);
+}
+}
 });
 });
